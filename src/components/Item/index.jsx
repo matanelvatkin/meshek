@@ -18,7 +18,7 @@ const columns = [
   },
 ];
 
-export default function Item({ orders,setUpdateOrders }) {
+export default function Item({ setOrders,orders,setUpdateOrders }) {
   const numberOfOrder = useParams();
   const nav = useNavigate();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -126,6 +126,8 @@ export default function Item({ orders,setUpdateOrders }) {
     const res=await axios.put("https://meshek-kirshner.co.il/wp-json/wc/v3/orders/"+order.number+"?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",{status:value})
     nav('../')
     setUpdateOrders(prev=>!prev)
+    setOrders()
+    
   }
   return (
     <div>
@@ -134,7 +136,7 @@ export default function Item({ orders,setUpdateOrders }) {
           nav("../items");
         }}
       >
-        all orders
+        back
       </button>
       {order ? (
         <Table
@@ -144,9 +146,9 @@ export default function Item({ orders,setUpdateOrders }) {
           pagination={false}
           bordered={true}
           title={() =>
-            `name: ${
+            `${
               order.shipping.first_name + " " + order.shipping.last_name
-            }, order number: ${numberOfOrder.id}`
+            }, ${numberOfOrder.id}`
           }
         />
       ) : (

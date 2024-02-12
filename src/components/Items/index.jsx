@@ -9,15 +9,15 @@ export default function Items({ orders }) {
   const nav = useNavigate();
   const columns = [
     {
-      title: "תאריך",
+      title: "date",
       dataIndex: "date",
     },
     {
-      title: "מספר הזמנה",
+      title: "order's number",
       dataIndex: "number",
     },
     {
-      title: "סטטוס",
+      title: "status",
       dataIndex: "status",
     },
   ];

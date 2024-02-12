@@ -24,7 +24,7 @@ function App() {
   return (
     <Routes>
       <Route path="/*" element={<Items orders={orders} />} />
-      <Route path="/items/:id" element={<Item orders={orders} setUpdateOrders={setUpdateOrders}/>} />
+      <Route path="/items/:id" element={<Item orders={orders} setOrders={setOrders} setUpdateOrders={setUpdateOrders}/>} />
     </Routes>
   );
 }

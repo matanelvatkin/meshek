@@ -1,55 +1,61 @@
-import React, { useEffect, useState } from 'react'
-import Item from '../Item';
-import { Table } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Table } from "antd";
+import { useNavigate } from "react-router-dom";
+import Loader from "../Loader";
 
-export default function Items({orders}) {
-    const [data,setData] = useState([]) 
-    const nav = useNavigate()
-    const columns = [
-        {
-          title: 'תאריך',
-          dataIndex: 'date',
-        },
-        {
-            title: 'מספר הזמנה',
-            dataIndex: 'number',
-        },
-        {
-            title: 'שם הלקוח',
-            dataIndex: 'name',
-        },
-        // {
-        //   title: 'סכום',
-        //   dataIndex: 'totalPrice',
-        // },
-        {
-          title: 'סטטוס',
-          dataIndex: 'status',
-        },
-      ];
-    useEffect(()=>{
-        if(orders&&orders.length>0){
-            setData(orders.map(item=>{
-                return {
-                    key:item.id,
-                    date:item.date_created.replace('T',`\n`),
-                    number:item.number,
-                    name:item.shipping.first_name +' '+ item.shipping.last_name,
-                    // totalPrice:item.total,
-                    status:item.status
-                }
-            }))
-        }
-    },[orders])
+export default function Items({ orders }) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const nav = useNavigate();
+  const columns = [
+    {
+      title: "תאריך",
+      dataIndex: "date",
+    },
+    {
+      title: "מספר הזמנה",
+      dataIndex: "number",
+    },
+    {
+      title: "סטטוס",
+      dataIndex: "status",
+    },
+  ];
+  useEffect(() => {
+    if (orders && orders.length > 0) {
+      setData(
+        orders.map((item) => {
+          return {
+            key: item.id,
+            date: new Date(item.date_modified.slice(0,item.date_modified.indexOf('T'))).toLocaleDateString(),
+            number: item.number,
+            status: item.status,
+          };
+        }).sort((a,b)=>a.number - b.number)
+      );
+      setLoading(false);
+    }
+  }, [orders]);
   return (
     <div>
-        <Table onRow={(record, rowIndex) => {
-    return {
-      onClick: (event) => {
-        nav('items/'+data[rowIndex].number)}
-    };
-  }} dataSource={data} columns={columns} />
+      {loading ? (
+        <Loader />
+      ) : (
+        <Table
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: (event) => {
+                nav("items/" + data[rowIndex].number);
+              },
+            };
+          }}
+          pagination={false}
+          bordered={true}
+          dataSource={data}
+          columns={columns}
+          
+        />
+      )}
     </div>
-  )
+  );
 }

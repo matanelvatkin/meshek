@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Table } from "antd";
+import { Select, Table } from "antd";
+import Loader from "../Loader";
+import axios from "axios";
 const columns = [
   {
     title: "name",
@@ -16,32 +18,71 @@ const columns = [
   },
 ];
 
-export default function Item({ orders }) {
+export default function Item({ orders,setUpdateOrders }) {
   const numberOfOrder = useParams();
   const nav = useNavigate();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [data, setData] = useState([]);
+  const [order, setOrder] = useState();
+  const [finish, setFinish] = useState(false);
+  const [status, setStatus] = useState([]);
   useEffect(() => {
-    if(orders){
-
-        let order = orders.find((item) => item.number === numberOfOrder.id);
-        setData(order.line_items.map((item,index)=>{
-            return {
-                key:index,
-                name: item.name,
-                id: item.product_id,
-                quantity: item.quantity
-            }
-        }))
-        if(JSON.parse(sessionStorage.getItem(numberOfOrder.id))){
-            setSelectedRowKeys(JSON.parse(sessionStorage.getItem(numberOfOrder.id)))
-        }
+    if (orders) {
+      setOrder(orders.find((item) => item.number === numberOfOrder.id));
     }
   }, [orders]);
+  useEffect(() => {
+    if (finish) {
+      const go = async () => {
+        const res = await axios.get('https://meshek-kirshner.co.il/wp-json/wp/v2/statuses?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29')
+        setStatus(Object.keys(res.data).map(stat=>{
+            if(!stat.includes('wc-')){
+                return {
+                    value:stat,
+                    label:stat
+                }
+            }
+            return{
+                value:stat.slice(3),
+                label:stat.slice(3)
+            }
+
+        }));
+      };
+      go();
+    }
+  }, [finish]);
+
+  useEffect(() => {
+    if (order) {
+      setData(
+        order.line_items.map((item, index) => {
+          return {
+            key: index,
+            name: item.name,
+            id: item.product_id,
+            quantity: item.quantity,
+          };
+        })
+      );
+      if (JSON.parse(sessionStorage.getItem(numberOfOrder.id))) {
+        setSelectedRowKeys(
+          JSON.parse(sessionStorage.getItem(numberOfOrder.id))
+        );
+      }
+    }
+  }, [order]);
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    sessionStorage.setItem(numberOfOrder.id,JSON.stringify(newSelectedRowKeys))
+    sessionStorage.setItem(
+      numberOfOrder.id,
+      JSON.stringify(newSelectedRowKeys)
+    );
     setSelectedRowKeys(newSelectedRowKeys);
+    if (newSelectedRowKeys.length === data.length) {
+      setFinish(true);
+    } else {
+      setFinish(false);
+    }
   };
   const rowSelection = {
     selectedRowKeys,
@@ -80,8 +121,14 @@ export default function Item({ orders }) {
       },
     ],
   };
+  const handleChange=async(value)=>{
+    //?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29
+    const res=await axios.put("https://meshek-kirshner.co.il/wp-json/wc/v3/orders/"+order.number+"?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",{status:value})
+    nav('../')
+    setUpdateOrders(prev=>!prev)
+  }
   return (
-    <>
+    <div>
       <button
         onClick={() => {
           nav("../items");
@@ -89,8 +136,23 @@ export default function Item({ orders }) {
       >
         all orders
       </button>
-      <h3>{numberOfOrder.id}</h3>
-      <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
-    </>
+      {order ? (
+        <Table
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+          bordered={true}
+          title={() =>
+            `name: ${
+              order.shipping.first_name + " " + order.shipping.last_name
+            }, order number: ${numberOfOrder.id}`
+          }
+        />
+      ) : (
+        <Loader />
+      )}
+      {finish && <Select onChange={handleChange} options={status} />}
+    </div>
   );
 }

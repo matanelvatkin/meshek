@@ -24,7 +24,6 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [data, setData] = useState([]);
   const [order, setOrder] = useState();
-  const [finish, setFinish] = useState(false);
   const [status, setStatus] = useState([]);
   useEffect(() => {
     if (orders) {
@@ -32,7 +31,6 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
     }
   }, [orders]);
   useEffect(() => {
-    if (finish) {
       const go = async () => {
         const res = await axios.get('https://meshek-kirshner.co.il/wp-json/wp/v2/statuses?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29')
         setStatus(Object.keys(res.data).map(stat=>{
@@ -50,8 +48,7 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
         }));
       };
       go();
-    }
-  }, [finish]);
+  }, []);
 
   useEffect(() => {
     if (order) {
@@ -78,11 +75,6 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
       JSON.stringify(newSelectedRowKeys)
     );
     setSelectedRowKeys(newSelectedRowKeys);
-    if (newSelectedRowKeys.length === data.length) {
-      setFinish(true);
-    } else {
-      setFinish(false);
-    }
   };
   const rowSelection = {
     selectedRowKeys,
@@ -138,6 +130,10 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
       >
         back
       </button>
+     {status.length>0&& <div>
+        <span>status:</span>
+          <Select placeholder='processing' style={{width:'150px'}}onChange={handleChange} options={status} />
+        </div>}
       {order ? (
         <Table
           rowSelection={rowSelection}
@@ -154,7 +150,6 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
       ) : (
         <Loader />
       )}
-      {finish && <Select onChange={handleChange} options={status} />}
     </div>
   );
 }

@@ -3,17 +3,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Select, Table } from "antd";
 import Loader from "../Loader";
 import axios from "axios";
+import logo from "../../../public/logo.jpeg"
 const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-  },
-  {
-    title: "Id",
-    dataIndex: "id",
-  },
-  {
-    title: "Qty",
+    {
+        title: "image",
+        dataIndex: "image",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+    },
+    {
+        title: "Qty",
     dataIndex: "quantity",
   },
 ];
@@ -33,7 +34,7 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
   useEffect(() => {
       const go = async () => {
         const res = await axios.get('https://meshek-kirshner.co.il/wp-json/wp/v2/statuses?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29')
-        setStatus(Object.keys(res.data).map(stat=>{
+        setStatus(Object.keys(res.data).filter(stat=>!stat.includes('acf-disabled')).map(stat=>{
             if(!stat.includes('wc-')){
                 return {
                     value:stat,
@@ -57,7 +58,7 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
           return {
             key: index,
             name: item.name,
-            id: item.product_id,
+            image:<img style={{width:'60px',height:"60px"}} src={item.image.src||logo} alt={item.id}/>,
             quantity: item.quantity,
           };
         })

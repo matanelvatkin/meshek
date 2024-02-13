@@ -5,15 +5,15 @@ import Loader from "../Loader";
 import axios from "axios";
 const columns = [
   {
-    title: "name",
+    title: "Name",
     dataIndex: "name",
   },
   {
-    title: "id",
+    title: "Id",
     dataIndex: "id",
   },
   {
-    title: "quantity",
+    title: "Qty",
     dataIndex: "quantity",
   },
 ];

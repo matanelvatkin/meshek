@@ -5,6 +5,7 @@ import Loader from "../Loader";
 import axios from "axios";
 import logo from "../../../public/logo.jpeg"
 import { languageContext } from "../../App";
+import './style.css'
 
 export default function Item({ setOrders,orders,setUpdateOrders }) {
   const numberOfOrder = useParams();
@@ -126,7 +127,8 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
   }
   return (
     <div>
-     {status.length>0&& <div>
+
+     {status.length>0&& <div className="statuswrap">
         <span>{language==='hebrew'?'סטטוס':'स्थिति'}:</span>
           <Select placeholder='processing' style={{width:'150px'}}onChange={handleChange} options={status} />
         </div>}

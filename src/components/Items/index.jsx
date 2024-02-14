@@ -3,6 +3,8 @@ import { Table } from "antd";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader";
 import { languageContext } from "../../App";
+import './style.css'
+
 
 export default function Items({ orders }) {
   const [data, setData] = useState([]);

@@ -1,31 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Select, Table } from "antd";
 import Loader from "../Loader";
 import axios from "axios";
 import logo from "../../../public/logo.jpeg"
-const columns = [
-    {
-        title: "image",
-        dataIndex: "image",
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-    },
-    {
-        title: "Qty",
-    dataIndex: "quantity",
-  },
-];
+import { languageContext } from "../../App";
 
 export default function Item({ setOrders,orders,setUpdateOrders }) {
   const numberOfOrder = useParams();
+  const {language} = useContext(languageContext)
   const nav = useNavigate();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [data, setData] = useState([]);
   const [order, setOrder] = useState();
   const [status, setStatus] = useState([]);
+  const columns = [
+      {
+          title: language==='hebrew'?'תמונה':'छवि',
+          dataIndex: "image",
+      },
+      {
+        title: language==='hebrew'?'שם':'नाम',
+        dataIndex: "name",
+      },
+      {
+          title: language==='hebrew'?'כמות':'मात्रा',
+      dataIndex: "quantity",
+    },
+  ];
   useEffect(() => {
     if (orders) {
       setOrder(orders.find((item) => item.number === numberOfOrder.id));
@@ -57,7 +59,7 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
         order.line_items.map((item, index) => {
           return {
             key: index,
-            name: item.name,
+            name: language==='hebrew'?item.name:item._inhdia,
             image:<img style={{width:'60px',height:"60px"}} src={item.image.src||logo} alt={item.id}/>,
             quantity: item.quantity,
           };
@@ -124,15 +126,8 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
   }
   return (
     <div>
-      <button
-        onClick={() => {
-          nav("../items");
-        }}
-      >
-        back
-      </button>
      {status.length>0&& <div>
-        <span>status:</span>
+        <span>{language==='hebrew'?'סטטוס':'स्थिति'}:</span>
           <Select placeholder='processing' style={{width:'150px'}}onChange={handleChange} options={status} />
         </div>}
       {order ? (

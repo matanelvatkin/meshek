@@ -1,23 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Table } from "antd";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader";
+import { languageContext } from "../../App";
 
 export default function Items({ orders }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const {language} = useContext(languageContext)
   const nav = useNavigate();
   const columns = [
     {
-      title: "Date",
+      title: language==='hebrew'?'תאריך':'तारीख',
       dataIndex: "date",
     },
     {
-      title: "Order's number",
+      title: language==='hebrew'?'מספר הזמנה':'क्रम संख्या',
       dataIndex: "number",
     },
     {
-      title: "Status",
+      title: language==='hebrew'?'סטטוס':'स्थिति',
       dataIndex: "status",
     },
   ];
@@ -45,7 +47,9 @@ export default function Items({ orders }) {
           onRow={(record, rowIndex) => {
             return {
               onClick: (event) => {
-                nav("items/" + data[rowIndex].number);
+                if(sessionStorage.getItem(data[rowIndex].number)||!data[rowIndex].isActive){
+                  nav("../items/" + data[rowIndex].number);
+                }
               },
             };
           }}

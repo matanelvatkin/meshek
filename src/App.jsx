@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Items from "./components/Items";
 import Item from "./components/Item";
+import Language from "./components/Language";
+import Header from "./components/Header";
 
+export const languageContext = createContext()
 function App() {
   const [orders, setOrders] = useState();
   const [updateOrders, setUpdateOrders] = useState(false);
+  const [language,setLanguage] = useState('hebrew');
   const location=useLocation()
   const nav = useNavigate();
   const go = async () => {
@@ -18,14 +22,28 @@ function App() {
   };
   useEffect(() => {
     go();
-    if (!location.pathname.includes("/items")) nav("/items");
   }, [updateOrders]);
+  useEffect(()=>{
+    if(localStorage.getItem('language')){
+      setLanguage(localStorage.getItem('language'))
+      nav('./items')
+    }
+    else{
+      nav('../language')
+    }
+  },[])
 
   return (
+    <languageContext.Provider value={{language,setLanguage}}>
+      <Header/>
+      <main className="main" style={{direction:language==='hebrew'?'rtl':'ltr'}}>
     <Routes>
-      <Route path="/*" element={<Items orders={orders} />} />
+      <Route path="/*" element={<Language />} />
+      <Route path="/items" element={<Items orders={orders} />} />
       <Route path="/items/:id" element={<Item orders={orders} setOrders={setOrders} setUpdateOrders={setUpdateOrders}/>} />
     </Routes>
+      </main>
+    </languageContext.Provider>
   );
 }
 

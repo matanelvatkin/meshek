@@ -10,6 +10,9 @@ export default function Items({ orders }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const {language} = useContext(languageContext)
+  const rowClassName =(record, index) => {
+    return data[index].isactive ? 't_red' : '';
+  };
   const nav = useNavigate();
   const columns = [
     {
@@ -59,7 +62,7 @@ export default function Items({ orders }) {
           bordered={true}
           dataSource={data}
           columns={columns}
-          
+          rowClassName={rowClassName}
         />
       )}
     </div>

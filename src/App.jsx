@@ -35,7 +35,7 @@ function App() {
 
   return (
     <languageContext.Provider value={{language,setLanguage}}>
-      <Header/>
+      {location.pathname.includes('items')&&<Header/>}
       <main className="main" style={{direction:language==='hebrew'?'rtl':'ltr'}}>
     <Routes>
       <Route path="/*" element={<Language />} />

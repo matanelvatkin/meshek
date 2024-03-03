@@ -42,6 +42,9 @@ export default function Items({ orders }) {
       );
       setLoading(false);
     }
+    else if (orders) {
+      setLoading(false);
+    }
   }, [orders]);
   return (
     <div>

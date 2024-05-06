@@ -3,70 +3,124 @@ import { Table } from "antd";
 import { useNavigate } from "react-router-dom";
 import Loader from "../Loader";
 import { languageContext } from "../../App";
-import './style.css'
-
+import "./style.css";
 
 export default function Items({ orders }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const {language} = useContext(languageContext)
-  const rowClassName =(record, index) => {
-    return data[index].isactive ? 't_red' : '';
+  const [shippingStatus, setShippingStatus] = useState();
+  const [shippings, setShippings] = useState({
+    selfCollecting: "",
+    deliver: "",
+  });
+  const { language } = useContext(languageContext);
+  const rowClassName = (record, index) => {
+    console.log(data[index]);
+    if (data[index].status == "likut") {
+      if (localStorage.getItem(data[index].number)) {
+        return "t_green";
+      } else {
+        return "t_red";
+      }
+    } else {
+      return "";
+    }
   };
   const nav = useNavigate();
   const columns = [
     {
-      title: language==='hebrew'?'תאריך':'तारीख',
+      title: language === "hebrew" ? "תאריך" : "तारीख",
       dataIndex: "date",
     },
     {
-      title: language==='hebrew'?'מספר הזמנה':'क्रम संख्या',
+      title: language === "hebrew" ? "מספר הזמנה" : "क्रम संख्या",
       dataIndex: "number",
     },
     {
-      title: language==='hebrew'?'סטטוס':'स्थिति',
-      dataIndex: "status",
+      title: language === "hebrew" ? "מחיר" : "स्थिति",
+      dataIndex: "total",
     },
   ];
   useEffect(() => {
     if (orders && orders.length > 0) {
-      setData(
-        orders.map((item) => {
-          return {
-            key: item.id,
-            date: new Date(item.date_modified.slice(0,item.date_modified.indexOf('T'))).toLocaleDateString(),
-            number: item.number,
-            status: item.status,
-          };
-        }).sort((a,b)=>a.number - b.number)
-      );
+      setShippings((prev) => ({
+        selfCollecting: orders.filter(
+          (order) => order.shipping_total == "0.00"
+        ),
+        deliver: orders.filter((order) => order.shipping_total != "0.00"),
+      }));
       setLoading(false);
-    }
-    else if (orders) {
+    } else if (orders) {
       setLoading(false);
     }
   }, [orders]);
+  useEffect(() => {
+    if (shippingStatus) {
+      setData(
+        shippings[shippingStatus]
+          .map((item) => {
+            return {
+              key: item.id,
+              date: new Date(
+                item.date_modified.slice(0, item.date_modified.indexOf("T"))
+              ).toLocaleDateString(),
+              number: item.number,
+              total: item.total,
+              status: item.status
+            };
+          })
+          .sort((a, b) => a.number - b.number)
+      );
+    }
+  }, [shippingStatus]);
   return (
     <div>
       {loading ? (
         <Loader />
       ) : (
-        <Table
-          onRow={(record, rowIndex) => {
-            return {
-              onClick: (event) => {
-                if(sessionStorage.getItem(data[rowIndex].number)||!data[rowIndex].isActive){
-                  nav("../items/" + data[rowIndex].number);
-                }
-              },
-            };
-          }}
-          pagination={false}
-          bordered={true}
-          dataSource={data}
-          columns={columns}
-          rowClassName={rowClassName}
-        />
+        <>
+          <div className="lan">
+            <button
+              className="deButton"
+              onClick={(e) => {
+                setShippingStatus(e.target.value);
+              }}
+              value="selfCollecting"
+            >
+              selfCollecting (
+              {shippings.selfCollecting ? shippings.selfCollecting.length : ""})
+            </button>
+            <button
+              className="deButton"
+              onClick={(e) => {
+                setShippingStatus(e.target.value);
+              }}
+              value="deliver"
+            >
+              deliver ({shippings.deliver ? shippings.deliver.length : ""})
+            </button>
+          </div>
+          {data.length>0&&<Table
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: (event) => {
+                  if (
+                    data[rowIndex].status!='likut'||
+                    localStorage.getItem(data[rowIndex].number)
+                  ) {
+                    localStorage.setItem(data[rowIndex].number, true);
+                    nav("../items/" + data[rowIndex].number);
+                  }
+                },
+              };
+            }}
+            pagination={false}
+            bordered={true}
+            dataSource={data}
+            columns={columns}
+            rowClassName={rowClassName}
+          />}
+        </>
       )}
     </div>
   );

@@ -15,7 +15,6 @@ export default function Items({ orders }) {
   });
   const { language } = useContext(languageContext);
   const rowClassName = (record, index) => {
-    console.log(data[index]);
     if (data[index].status == "likut") {
       if (localStorage.getItem(data[index].number)) {
         return "t_green";
@@ -39,6 +38,10 @@ export default function Items({ orders }) {
     {
       title: language === "hebrew" ? "מחיר" : "स्थिति",
       dataIndex: "total",
+    },
+    {
+      title: language === "hebrew" ? "כמות" : "स्थिति",
+      dataIndex: "collected",
     },
   ];
   useEffect(() => {
@@ -66,6 +69,7 @@ export default function Items({ orders }) {
               ).toLocaleDateString(),
               number: item.number,
               total: item.total,
+              collected: (sessionStorage.getItem(item.number)?JSON.parse(sessionStorage.getItem(item.number)).length:'0')+"/"+item.line_items.length,
               status: item.status
             };
           })

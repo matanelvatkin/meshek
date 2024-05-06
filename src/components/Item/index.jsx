@@ -79,6 +79,9 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
     }
   }, [order]);
   const onSelectChange = async(newSelectedRowKeys) => {
+    if(!sessionStorage.getItem(numberOfOrder.id)){
+    await axios.put("https://meshek-kirshner.co.il/wp-json/wc/v3/orders/"+order.number+"?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",{status:'likut'})
+    }
     sessionStorage.setItem(
       numberOfOrder.id,
       JSON.stringify(newSelectedRowKeys)
@@ -128,7 +131,6 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
     nav('../items')
     setUpdateOrders(prev=>!prev)
     setOrders()
-    
   }
   return (
     <div>

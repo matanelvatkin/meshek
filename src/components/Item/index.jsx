@@ -31,7 +31,12 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
   ];
   useEffect(() => {
     if (orders) {
-      setOrder(orders.find((item) => item.number === numberOfOrder.id));
+      const ordered =orders.find((item) => item.number === numberOfOrder.id)
+      const res =  (async()=>await axios.get(
+        "https://meshek-kirshner.co.il/wp-json/wc/v3/orders/"+ordered.id+"?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29"
+      ))();
+      if(res.status=='likut'&&!localStorage.getItem(ordered.id))nav('../items')
+      setOrder(ordered);
     }
   }, [orders]);
   useEffect(() => {
@@ -79,9 +84,6 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
       JSON.stringify(newSelectedRowKeys)
     );
     setSelectedRowKeys(newSelectedRowKeys);
-    if(!order.isactive){
-      await axios.put("https://meshek-kirshner.co.il/wp-json/wc/v3/orders/"+order.number+"?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",{isactive:TRUE})
-    }
   };
   const rowSelection = {
     selectedRowKeys,
@@ -123,7 +125,7 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
   const handleChange=async(value)=>{
     //?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29
     const res=await axios.put("https://meshek-kirshner.co.il/wp-json/wc/v3/orders/"+order.number+"?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",{status:value})
-    nav('../')
+    nav('../items')
     setUpdateOrders(prev=>!prev)
     setOrders()
     

@@ -1,17 +1,15 @@
-import React, { useContext } from 'react'
+import React, { useContext} from 'react'
 import { languageContext } from '../../App'
-import { useNavigate } from 'react-router-dom'
 import './style.css'
 
-export default function Language() {
+export default function Language({setOpenMenu}) {
     const {setLanguage} =useContext(languageContext)
-    const nav= useNavigate()
     const onClick = (e) =>{
         setLanguage(e.target.value)
-        nav('../items')
+        setOpenMenu(prev=>!prev)
     }
-  return (
-    <div className='lan'>
+    
+  return (<div className='lan'>
         <button className='deButton' onClick={onClick} value='hebrew'>עברית</button>
         <button className='deButton' onClick={onClick}  value='india'>हिंदी</button>
     </div>

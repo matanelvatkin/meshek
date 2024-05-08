@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Table } from "antd";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import Loader from "../Loader";
 import { languageContext } from "../../App";
 import "./style.css";
@@ -52,6 +52,12 @@ export default function Items({ orders }) {
         ),
         deliver: orders.filter((order) => order.shipping_total != "0.00"),
       }));
+      if(sessionStorage.getItem("shippingStatus")){
+        setShippingStatus(sessionStorage.getItem("shippingStatus"))
+      }
+      else{
+        setShippingStatus('deliver')
+      }
       setLoading(false);
     } else if (orders) {
       setLoading(false);
@@ -83,10 +89,11 @@ export default function Items({ orders }) {
         <Loader />
       ) : (
         <>
-          <div className="lan">
+          <div className="collectingOptions">
             <button
-              className="deButton"
+              className="coButton"
               onClick={(e) => {
+                sessionStorage.setItem('shippingStatus', e.target.value);
                 setShippingStatus(e.target.value);
               }}
               value="selfCollecting"
@@ -95,8 +102,9 @@ export default function Items({ orders }) {
               {shippings.selfCollecting ? shippings.selfCollecting.length : ""})
             </button>
             <button
-              className="deButton"
+              className="coButton"
               onClick={(e) => {
+                sessionStorage.setItem('shippingStatus', e.target.value);
                 setShippingStatus(e.target.value);
               }}
               value="deliver"

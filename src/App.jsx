@@ -4,7 +4,6 @@ import axios from "axios";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Items from "./components/Items";
 import Item from "./components/Item";
-import Language from "./components/Language";
 import Header from "./components/Header";
 
 export const languageContext = createContext()
@@ -24,13 +23,8 @@ function App() {
     go();
   }, [updateOrders]);
   useEffect(()=>{
-    if(localStorage.getItem('language')){
-      setLanguage(localStorage.getItem('language'))
+      setLanguage('hebrew')
       nav('./items')
-    }
-    else{
-      nav('../language')
-    }
   },[])
 
   return (
@@ -38,7 +32,7 @@ function App() {
       {location.pathname.includes('items')&&<Header/>}
       <main className="main" style={{direction:language==='hebrew'?'rtl':'ltr'}}>
     <Routes>
-      <Route path="/*" element={<Language />} />
+      <Route path="/*" element={()=>nav('../items')} />
       <Route path="/items" element={<Items orders={orders} />} />
       <Route path="/items/:id" element={<Item orders={orders} setOrders={setOrders} setUpdateOrders={setUpdateOrders}/>} />
     </Routes>

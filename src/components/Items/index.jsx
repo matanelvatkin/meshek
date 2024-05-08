@@ -91,7 +91,7 @@ export default function Items({ orders }) {
         <>
           <div className="collectingOptions">
             <button
-              className="coButton"
+              className={`coButton ${shippingStatus=='selfCollecting'? 'selected' : ''}`}
               onClick={(e) => {
                 sessionStorage.setItem('shippingStatus', e.target.value);
                 setShippingStatus(e.target.value);
@@ -102,7 +102,7 @@ export default function Items({ orders }) {
               {shippings.selfCollecting ? shippings.selfCollecting.length : ""})
             </button>
             <button
-              className="coButton"
+              className={`coButton ${shippingStatus=='deliver'? 'selected' : ''}`}
               onClick={(e) => {
                 sessionStorage.setItem('shippingStatus', e.target.value);
                 setShippingStatus(e.target.value);

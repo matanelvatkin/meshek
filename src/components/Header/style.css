@@ -16,15 +16,28 @@
     position: relative;
 }
 
-.deButton {
-    padding: 8px 10px;
+.deButton2 {
     border: none;
     background: green;
     color: #fff;
-    font-size: 16px;
-    width: 48%;
-    margin-bottom: 20px;
-    border-radius: 5px;
+    border-radius: 50%;
     font-weight: bold;
-    box-shadow: 2px 2px #0000002e;
-  }
+    width: 50px;
+    height: 50px;
+}
+
+.deButton2 svg {
+    padding: 0;
+    height: 35px;
+    width: 35px;
+}
+
+.deButton3 {
+    font-size: 20px;
+    font-family: 'Assistant';
+    font-weight: 400;
+    text-decoration: underline;
+    background: #fff;
+    border: none;
+
+}

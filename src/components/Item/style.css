@@ -1,9 +1,16 @@
 .statuswrap {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: nowrap;
-    align-content: center;
+    margin: 10px 0px;
+    align-content: space-between;
     justify-content: center;
     align-items: center;
-    margin: 10px 0px;
+}
+
+.titleststus {
+    width: 100%;
+    text-align: center;
+    font-size: 21px;
+    padding-bottom: 10px;
 }

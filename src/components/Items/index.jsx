@@ -32,11 +32,11 @@ export default function Items({ orders }) {
       dataIndex: "date",
     },
     {
-      title: language === "hebrew" ? "מספר הזמנה" : "क्रम संख्या",
+      title: language === "hebrew" ? "הזמנה" : "क्रम संख्या",
       dataIndex: "number",
     },
     {
-      title: language === "hebrew" ? "מחיר" : "स्थिति",
+      title: language === "hebrew" ? "סה''כ" : "स्थिति",
       dataIndex: "total",
     },
     {
@@ -98,7 +98,7 @@ export default function Items({ orders }) {
               }}
               value="selfCollecting"
             >
-              selfCollecting (
+              ללא משלוח (
               {shippings.selfCollecting ? shippings.selfCollecting.length : ""})
             </button>
             <button
@@ -109,7 +109,7 @@ export default function Items({ orders }) {
               }}
               value="deliver"
             >
-              deliver ({shippings.deliver ? shippings.deliver.length : ""})
+              משלוחים ({shippings.deliver ? shippings.deliver.length : ""})
             </button>
           </div>
           {data.length>0&&<Table

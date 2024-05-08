@@ -1,26 +1,28 @@
-.lan{
+.lan {
     position: absolute;
-    top:60px;
-    width: 100px;
+    top: 60px;
+    width: 200px;
     right: 70px;
-    height: 90px;
-    background-color: aliceblue;
+    height: 200px;
+    background-color: #fff;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 7px;
+    gap: 20px;
     box-shadow: 0 0 5px;
-
 }
 
-.deButton{
-    min-width: 70px;
-    width: 70px;
-    height: 30px;
-    padding: 5px 20px;
+.deButton {
+    padding: 8px 10px;
     border: none;
     background: green;
     color: #fff;
     font-size: 16px;
-}
+    width: 48%;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 2px 2px #0000002e;
+  }
+

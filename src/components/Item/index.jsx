@@ -136,7 +136,7 @@ export default function Item({ setOrders,orders,setUpdateOrders }) {
     <div>
 
      {status.length>0&& <div className="statuswrap">
-        <span>{language==='hebrew'?'סטטוס':'स्थिति'}:</span>
+        <span  className="titleststus">{language==='hebrew'?'בסיום יש לבחור את שם המלקט':'स्थिति'}:</span>
           <Select placeholder='processing' style={{width:'150px'}}onChange={handleChange} options={status} />
         </div>}
       {order ? (

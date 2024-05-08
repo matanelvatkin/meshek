@@ -26,7 +26,7 @@ export default function Header() {
       {openMenu && <Language setOpenMenu={setOpenMenu} />}
       {location.pathname !== "/items" && (
         <button className="deButton" onClick={onClick} value={"../items"}>
-          {language === "hebrew" ? "הזמנות" : "आदेश"}
+          {language === "hebrew" ? "חזרה לרשימה" : "आदेश"}
         </button>
       )}
     </div>

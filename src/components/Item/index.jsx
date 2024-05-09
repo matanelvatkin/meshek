@@ -160,9 +160,8 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
       order.date_modified
     ).toISOString().slice(0, order.date_modified.indexOf("T")),
       mobile: order.billing.phone,
-      information: order.customer_note,
       reference:order.number,
-      instruction: order.customer_note,
+      instructions: order.customer_note,
       address: { street: address.trim(),city:order.shipping.city.trim()},
     };
     const res = await axios.post(

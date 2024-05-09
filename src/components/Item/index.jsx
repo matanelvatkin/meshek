@@ -70,6 +70,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
 
   useEffect(() => {
     if (order) {
+      console.log(order);
       setData(
         order.line_items.map((item, index) => {
           return {
@@ -160,6 +161,8 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
     ).toISOString().slice(0, order.date_modified.indexOf("T")),
       mobile: order.billing.phone,
       information: order.customer_note,
+      reference:order.number,
+      instruction: order.customer_note,
       address: { street: address.trim(),city:order.shipping.city.trim()},
     };
     const res = await axios.post(
@@ -168,7 +171,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
       {
         headers: {
           "x-access-token":
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTIsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTE2NzE4MCwiZXhwIjoxNzc4MjM5MTgwfQ.6wM_uUIVDRkOVxZvRyZbcx28YWXkm5NdIQE5PUd-O3w",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
         },
       }
     );

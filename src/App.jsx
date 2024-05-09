@@ -24,7 +24,6 @@ function App() {
   }, [updateOrders]);
   useEffect(()=>{
       setLanguage('hebrew')
-      nav('./items')
   },[])
 
   return (

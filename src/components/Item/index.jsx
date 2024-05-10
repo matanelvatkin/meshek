@@ -70,7 +70,6 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
 
   useEffect(() => {
     if (order) {
-      console.log(order);
       setData(
         order.line_items.map((item, index) => {
           return {

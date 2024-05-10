@@ -17,13 +17,18 @@ function App() {
     const res = await axios.get(
       "https://meshek-kirshner.co.il/wp-json/wc/v3/orders?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29&status=processing likut&per_page=100"
     );
+    if(res.data&&res.data.length>0)
     setOrders(res.data);
+  else{
+    setOrders([]);
+  }
   };
   useEffect(() => {
     go();
   }, [updateOrders]);
   useEffect(()=>{
       setLanguage('hebrew')
+      nav('../items')
   },[])
 
   return (
@@ -31,7 +36,6 @@ function App() {
       {location.pathname.includes('items')&&<Header/>}
       <main className="main" style={{direction:language==='hebrew'?'rtl':'ltr'}}>
     <Routes>
-      <Route path="/*" element={()=>nav('../items')} />
       <Route path="/items" element={<Items orders={orders} />} />
       <Route path="/items/:id" element={<Item orders={orders} setOrders={setOrders} setUpdateOrders={setUpdateOrders}/>} />
     </Routes>

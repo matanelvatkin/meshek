@@ -146,47 +146,53 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
     ],
   };
   const handleChange = async (value) => {
-    if(order.total!="0.00"){
-    let regex = /^(.*?\d+)\s+/;
-    let match = order.shipping.address_1.match(regex);
-    let address = match
-      ? match[1]
-      : order.shipping.address_1;
-    const orderData = {
-      recipient_name:
-        order.shipping.first_name + " " + order.shipping.last_name,
-      expected_date: new Date(
-      order.date_modified
-    ).toISOString().slice(0, order.date_modified.indexOf("T")),
-      mobile: order.billing.phone,
-      reference:order.number,
-      instructions: order.customer_note,
-      address: { street: address.trim(),city:order.shipping.city.trim()},
-    };
-    const res = await axios.post(
-      "https://app.delivers.co.il/api/shipments",
-      orderData,
-      {
-        headers: {
-          "x-access-token":
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
-        },
-      }
-    ).catch(async err=>{
-      await axios.post("https://app.delivers.co.il/api/shipments/import?create_with_error=true",orderData,
-      {
-        headers: {
-          "x-access-token":
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
-        },
-      })
-    });
-  }
+    if(confirm('אתה בטוח שסיימת?')){
+    if (order.total != "0.00") {
+      let regex = /^(.*?\d+)\s+/;
+      let match = order.shipping.address_1.match(regex);
+      let address = match ? match[1] : order.shipping.address_1;
+      const orderData = {
+        recipient_name:
+          order.shipping.first_name + " " + order.shipping.last_name,
+        expected_date: new Date(order.date_modified)
+          .toISOString()
+          .slice(0, order.date_modified.indexOf("T")),
+        mobile: order.billing.phone,
+        reference: order.number,
+        instructions: order.customer_note,
+        address: { street: address.trim(), city: order.shipping.city.trim() },
+      };
+      const res = await axios
+        .post("https://app.delivers.co.il/api/shipments", orderData, {
+          headers: {
+            "x-access-token":
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
+          },
+        })
+        .catch(async (err) => {
+          await axios.post(
+            "https://app.delivers.co.il/api/shipments/import?create_with_error=true",
+            orderData,
+            {
+              headers: {
+                "x-access-token":
+                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
+              },
+            }
+          );
+        });
+    }
     // ?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29
-    const res=await axios.put("https://meshek-kirshner.co.il/wp-json/wc/v3/orders/"+order.number+"?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",{status:value})
-    nav('../items')
-    setUpdateOrders(prev=>!prev)
-    setOrders()
+    const res = await axios.put(
+      "https://meshek-kirshner.co.il/wp-json/wc/v3/orders/" +
+        order.number +
+        "?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",
+      { status: value }
+    );
+    nav("../items");
+    setUpdateOrders((prev) => !prev);
+    setOrders();
+  }
   };
   return (
     <div>
@@ -200,7 +206,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
             style={{ width: "150px" }}
             onChange={handleChange}
             options={status}
-            disabled={selectedRowKeys.length!=order.line_items.length}
+            disabled={selectedRowKeys.length != order.line_items.length}
           />
         </div>
       )}
@@ -211,11 +217,16 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
           dataSource={data}
           pagination={false}
           bordered={true}
-          title={() =>
-            `${order.shipping.first_name + " " + order.shipping.last_name}, ${
-              numberOfOrder.id
-            }`
-          }
+          title={() => (
+            <div>
+              <div>
+                <p>שם:{order.shipping.first_name + " " + order.shipping.last_name}</p>
+                <p>פלאפון: {order.billing.phone}</p>
+                <p>מספר: {numberOfOrder.id}</p>
+              </div>
+              <p>הערות: {order.customer_note}</p>
+            </div>
+          )}
         />
       ) : (
         <Loader />

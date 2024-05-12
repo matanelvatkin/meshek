@@ -220,7 +220,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
           title={() => (
             <div>
               <div>
-                <p>שם:{order.shipping.first_name + " " + order.shipping.last_name}</p>
+                <p>שם:{order.billing.first_name + " " + order.billing.last_name}</p>
                 <p>פלאפון: {order.billing.phone}</p>
                 <p>מספר: {numberOfOrder.id}</p>
               </div>

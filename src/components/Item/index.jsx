@@ -147,7 +147,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   };
   const handleChange = async (value) => {
     if(confirm('אתה בטוח שסיימת?')){
-    if (order.total != "0.00") {
+    if (order.shipping_total != "0.00") {
       let regex = /^(.*?\d+)\s+/;
       let match = order.shipping.address_1.match(regex);
       let address = match ? match[1] : order.shipping.address_1;

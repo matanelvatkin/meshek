@@ -67,7 +67,11 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
     };
     go();
   }, []);
-
+  const rowClassName = (record, index) => {
+    if (data[index].quantity > 1) {
+        return "t_green";
+      }
+  };
   useEffect(() => {
     if (order) {
       setData(
@@ -217,6 +221,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
           dataSource={data}
           pagination={false}
           bordered={true}
+          rowClassName={rowClassName}
           title={() => (
             <div>
               <div>

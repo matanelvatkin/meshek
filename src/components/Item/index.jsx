@@ -187,7 +187,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
           );
         });
     }else{
-      const message = `שלום *${order.shipping.first_name + " " + order.shipping.last_name} *
+      const message = `שלום *${order.shipping.first_name + " " + order.shipping.last_name}*
       הזמנה *${order.number}* ממשק קירשנר מוכנה לאיסוף. 
       
       נא הגיעו אל ״פירות קדרון" בוויז.

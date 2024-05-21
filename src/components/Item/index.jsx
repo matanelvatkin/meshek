@@ -74,6 +74,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   };
   useEffect(() => {
     if (order) {
+     
       setData(
         order.line_items.map((item, index) => {
           return {
@@ -185,6 +186,18 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
             }
           );
         });
+    }else{
+      const message = `שלום *${order.shipping.first_name + " " + order.shipping.last_name} *
+      הזמנה *${order.number}* ממשק קירשנר מוכנה לאיסוף. 
+      
+      נא הגיעו אל ״פירות קדרון" בוויז.
+      ברגע שאתם מגיעים אנא פנו לקופאים.
+      
+      שעות הפתיחה
+      ראשון-חמישי: 9:00-17:00
+      שישי: 8:00-15:00`
+      const phone = order.billing.phone.startsWith('0')?order.billing.phone.replace("0",'972',1):order.billing.phone
+      const res = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=${import.meta.env.VITE_API_UUID}&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
     }
     // ?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29
     const res = await axios.put(

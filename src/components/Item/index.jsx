@@ -197,7 +197,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
       ראשון-חמישי: 9:00-17:00
       שישי: 8:00-15:00`
       const phone = order.billing.phone.startsWith('0')?order.billing.phone.replace("0",'972',1):order.billing.phone
-      const res = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=${import.meta.env.VITE_API_UUID}&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
+      const res = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=6a708fea-a4d0-4976-a180-9f3bdd3de52e&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
     }
     // ?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29
     const res = await axios.put(

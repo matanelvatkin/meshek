@@ -212,7 +212,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
       "?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",
       { status: value }
     );
-    const response = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=6a708fea-a4d0-4976-a180-9f3bdd3de52e&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
+    // const response = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=6a708fea-a4d0-4976-a180-9f3bdd3de52e&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
     nav("../items");
     setUpdateOrders((prev) => !prev);
     setOrders();

@@ -152,7 +152,15 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   };
   const handleChange = async (value) => {
     if(confirm('אתה בטוח שסיימת?')){
+      const phone = order.billing.phone.startsWith('0')?order.billing.phone.replace("0",'972',1):order.billing.phone
+      let message = ''
     if (order.shipping_total != "0.00") {
+      message = ` שלום *${order.shipping.first_name + " " + order.shipping.last_name}*
+      הזמנה מספר *${order.number}*  ממשק קירשנר מוכנה למשלוח.
+      
+      שליח יצור איתך קשר בהקדם.
+      
+      ❗ נשמח אם תוכלו להשיב לסקר שישלח אליכם מחר❗`
       let regex = /^(.*?\d+)\s+/;
       let match = order.shipping.address_1.match(regex);
       let address = match ? match[1] : order.shipping.address_1;
@@ -187,7 +195,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
           );
         });
     }else{
-      const message = `שלום *${order.shipping.first_name + " " + order.shipping.last_name}*
+      message = `שלום *${order.shipping.first_name + " " + order.shipping.last_name}*
       הזמנה *${order.number}* ממשק קירשנר מוכנה לאיסוף. 
       
       נא הגיעו אל ״פירות קדרון" בוויז.
@@ -196,16 +204,15 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
       שעות הפתיחה
       ראשון-חמישי: 9:00-17:00
       שישי: 8:00-15:00`
-      const phone = order.billing.phone.startsWith('0')?order.billing.phone.replace("0",'972',1):order.billing.phone
-      const res = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=6a708fea-a4d0-4976-a180-9f3bdd3de52e&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
     }
     // ?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29
     const res = await axios.put(
       "https://meshek-kirshner.co.il/wp-json/wc/v3/orders/" +
-        order.number +
-        "?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",
+      order.number +
+      "?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",
       { status: value }
     );
+    const response = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=6a708fea-a4d0-4976-a180-9f3bdd3de52e&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
     nav("../items");
     setUpdateOrders((prev) => !prev);
     setOrders();

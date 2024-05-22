@@ -28,8 +28,8 @@ export default function Items({ orders }) {
   const nav = useNavigate();
   const columns = [
     {
-      title: language === "hebrew" ? "תאריך" : "तारीख",
-      dataIndex: "date",
+      title: language === "hebrew" ? "כתובת" : "तारीख",
+      dataIndex: "city",
     },
     {
       title: language === "hebrew" ? "הזמנה" : "क्रम संख्या",
@@ -70,9 +70,7 @@ export default function Items({ orders }) {
           .map((item) => {
             return {
               key: item.id,
-              date: new Date(
-                item.date_modified.slice(0, item.date_modified.indexOf("T"))
-              ).toLocaleDateString(),
+              city: item.shipping.city,
               number: item.number,
               total: item.total,
               collected: (sessionStorage.getItem(item.number)?JSON.parse(sessionStorage.getItem(item.number)).length:'0')+"/"+item.line_items.length,

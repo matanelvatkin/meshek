@@ -249,7 +249,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
                 <p>פלאפון: {order.billing.phone}</p>
                 <p>מספר: {numberOfOrder.id}</p>
               </div>
-              <p>הערות: {order.customer_note}</p>
+              <div>הערות:<p className="text_red"> {order.customer_note}</p></div>
             </div>
           )}
         />

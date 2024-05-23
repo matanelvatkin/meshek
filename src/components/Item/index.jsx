@@ -69,7 +69,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   }, []);
   const rowClassName = (record, index) => {
     if (data[index].quantity > 1) {
-        return "t_green";
+        return "t_yalow";
       }
   };
   useEffect(() => {
@@ -248,6 +248,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
                 <p>שם:{order.billing.first_name + " " + order.billing.last_name}</p>
                 <p>פלאפון: {order.billing.phone}</p>
                 <p>מספר: {numberOfOrder.id}</p>
+                <p>כתובת: {order.shipping.city}</p>
               </div>
               <div>הערות:<p className="text_red"> {order.customer_note}</p></div>
             </div>

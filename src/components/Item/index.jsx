@@ -15,6 +15,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   const [data, setData] = useState([]);
   const [order, setOrder] = useState();
   const [status, setStatus] = useState([]);
+  const [userText, setUserText] = useState("");
   const columns = [
     {
       title: language === "hebrew" ? "תמונה" : "छवि",
@@ -29,6 +30,34 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
       dataIndex: "quantity",
     },
   ];
+  const translateText = async (text) => {
+    try {
+      let response = await axios.get('https://api.mymemory.translated.net/get', {
+        params: {
+          q: text,
+          langpair: 'he|en'
+        }
+      });
+       response = await axios.get('https://api.mymemory.translated.net/get', {
+        params: {
+          q: response.data.responseData.translatedText,
+          langpair: 'en|hi'
+        }
+      });
+      setUserText(response.data.responseData.translatedText);
+    } catch (error) {
+      console.error("Error translating text:", error);
+    }
+  };
+  const getText = async (text) => {
+    if(text){
+      if (language === "hebrew") setUserText(text);
+      else translateText(text);
+    }
+  };
+  useEffect(() => {
+    if (order) getText(order.customer_note);
+  }, [language]);
   useEffect(() => {
     if (orders) {
       const ordered = orders.find((item) => item.number === numberOfOrder.id);
@@ -69,12 +98,12 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   }, []);
   const rowClassName = (record, index) => {
     if (data[index].quantity > 1) {
-        return "t_yalow";
-      }
+      return "t_yalow";
+    }
   };
   useEffect(() => {
     if (order) {
-     
+      getText(order.customer_note);
       setData(
         order.line_items.map((item, index) => {
           return {
@@ -151,51 +180,57 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
     ],
   };
   const handleChange = async (value) => {
-    if(confirm('אתה בטוח שסיימת?')){
-      const phone = order.billing.phone.startsWith('0')?order.billing.phone.replace("0",'972',1):order.billing.phone
-      let message = ''
-    if (order.shipping_total != "0.00") {
-      message = ` שלום *${order.shipping.first_name + " " + order.shipping.last_name}*
+    if (confirm("אתה בטוח שסיימת?")) {
+      const phone = order.billing.phone.startsWith("0")
+        ? order.billing.phone.replace("0", "972", 1)
+        : order.billing.phone;
+      let message = "";
+      if (order.shipping_total != "0.00") {
+        message = ` שלום *${
+          order.shipping.first_name + " " + order.shipping.last_name
+        }*
       הזמנה מספר *${order.number}*  ממשק קירשנר מוכנה למשלוח.
       
       שליח יצור איתך קשר בהקדם.
       
-      ❗ נשמח אם תוכלו להשיב לסקר שישלח אליכם מחר❗`
-      let regex = /^(.*?\d+)\s+/;
-      let match = order.shipping.address_1.match(regex);
-      let address = match ? match[1] : order.shipping.address_1;
-      const orderData = {
-        recipient_name:
-          order.shipping.first_name + " " + order.shipping.last_name,
-        expected_date: new Date(order.date_modified)
-          .toISOString()
-          .slice(0, order.date_modified.indexOf("T")),
-        mobile: order.billing.phone,
-        reference: order.number,
-        instructions: order.customer_note,
-        address: { street: address.trim(), city: order.shipping.city.trim() },
-      };
-      const res = await axios
-        .post("https://app.delivers.co.il/api/shipments", orderData, {
-          headers: {
-            "x-access-token":
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
-          },
-        })
-        .catch(async (err) => {
-          await axios.post(
-            "https://app.delivers.co.il/api/shipments/import?create_with_error=true",
-            orderData,
-            {
-              headers: {
-                "x-access-token":
-                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
-              },
-            }
-          );
-        });
-    }else{
-      message = `שלום *${order.shipping.first_name + " " + order.shipping.last_name}*
+      ❗ נשמח אם תוכלו להשיב לסקר שישלח אליכם מחר❗`;
+        let regex = /^(.*?\d+)\s+/;
+        let match = order.shipping.address_1.match(regex);
+        let address = match ? match[1] : order.shipping.address_1;
+        const orderData = {
+          recipient_name:
+            order.shipping.first_name + " " + order.shipping.last_name,
+          expected_date: new Date(order.date_modified)
+            .toISOString()
+            .slice(0, order.date_modified.indexOf("T")),
+          mobile: order.billing.phone,
+          reference: order.number,
+          instructions: order.customer_note,
+          address: { street: address.trim(), city: order.shipping.city.trim() },
+        };
+        const res = await axios
+          .post("https://app.delivers.co.il/api/shipments", orderData, {
+            headers: {
+              "x-access-token":
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
+            },
+          })
+          .catch(async (err) => {
+            await axios.post(
+              "https://app.delivers.co.il/api/shipments/import?create_with_error=true",
+              orderData,
+              {
+                headers: {
+                  "x-access-token":
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
+                },
+              }
+            );
+          });
+      } else {
+        message = `שלום *${
+          order.shipping.first_name + " " + order.shipping.last_name
+        }*
       הזמנה *${order.number}* ממשק קירשנר מוכנה לאיסוף. 
       
       נא הגיעו אל ״פירות קדרון" בוויז.
@@ -203,20 +238,20 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
       
       שעות הפתיחה
       ראשון-חמישי: 9:00-17:00
-      שישי: 8:00-15:00`
+      שישי: 8:00-15:00`;
+      }
+      // ?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29
+      const res = await axios.put(
+        "https://meshek-kirshner.co.il/wp-json/wc/v3/orders/" +
+          order.number +
+          "?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",
+        { status: value }
+      );
+      // const response = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=6a708fea-a4d0-4976-a180-9f3bdd3de52e&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
+      nav("../items");
+      setUpdateOrders((prev) => !prev);
+      setOrders();
     }
-    // ?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29
-    const res = await axios.put(
-      "https://meshek-kirshner.co.il/wp-json/wc/v3/orders/" +
-      order.number +
-      "?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",
-      { status: value }
-    );
-    // const response = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=6a708fea-a4d0-4976-a180-9f3bdd3de52e&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
-    nav("../items");
-    setUpdateOrders((prev) => !prev);
-    setOrders();
-  }
   };
   return (
     <div>
@@ -245,12 +280,16 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
           title={() => (
             <div>
               <div>
-                <p>שם:{order.billing.first_name + " " + order.billing.last_name}</p>
+                <p>
+                  שם:{order.billing.first_name + " " + order.billing.last_name}
+                </p>
                 <p>פלאפון: {order.billing.phone}</p>
                 <p>מספר: {numberOfOrder.id}</p>
                 <p>כתובת: {order.shipping.city}</p>
               </div>
-              <div>הערות:<p className="text_red"> {order.customer_note}</p></div>
+              <div>
+                הערות:<p className="text_red"> {userText}</p>
+              </div>
             </div>
           )}
         />

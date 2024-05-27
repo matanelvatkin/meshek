@@ -38,12 +38,6 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
           langpair: 'he|en'
         }
       });
-       response = await axios.get('https://api.mymemory.translated.net/get', {
-        params: {
-          q: response.data.responseData.translatedText,
-          langpair: 'en|hi'
-        }
-      });
       setUserText(response.data.responseData.translatedText);
     } catch (error) {
       console.error("Error translating text:", error);

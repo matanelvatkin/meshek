@@ -16,6 +16,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   const [order, setOrder] = useState();
   const [status, setStatus] = useState([]);
   const [userText, setUserText] = useState("");
+  const [numOfBoxes, setNumOfBoxes] = useState(0);
   const columns = [
     {
       title: language === "hebrew" ? "תמונה" : "छवि",
@@ -32,19 +33,22 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   ];
   const translateText = async (text) => {
     try {
-      let response = await axios.get('https://api.mymemory.translated.net/get', {
-        params: {
-          q: text,
-          langpair: 'he|en'
+      let response = await axios.get(
+        "https://api.mymemory.translated.net/get",
+        {
+          params: {
+            q: text,
+            langpair: "he|en",
+          },
         }
-      });
+      );
       setUserText(response.data.responseData.translatedText);
     } catch (error) {
       console.error("Error translating text:", error);
     }
   };
   const getText = async (text) => {
-    if(text){
+    if (text) {
       if (language === "hebrew") setUserText(text);
       else translateText(text);
     }
@@ -175,73 +179,59 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   };
   const handleChange = async (value) => {
     if (confirm("אתה בטוח שסיימת?")) {
-      const phone = order.billing.phone.startsWith("0")
-        ? order.billing.phone.replace("0", "972", 1)
-        : order.billing.phone;
-      let message = "";
       if (order.shipping_total != "0.00") {
-        message = ` שלום *${
-          order.shipping.first_name + " " + order.shipping.last_name
-        }*
-      הזמנה מספר *${order.number}*  ממשק קירשנר מוכנה למשלוח.
-      
-      שליח יצור איתך קשר בהקדם.
-      
-      ❗ נשמח אם תוכלו להשיב לסקר שישלח אליכם מחר❗`;
-        let regex = /^(.*?\d+)\s+/;
-        let match = order.shipping.address_1.match(regex);
-        let address = match ? match[1] : order.shipping.address_1;
-        const orderData = {
-          recipient_name:
-            order.shipping.first_name + " " + order.shipping.last_name,
-          expected_date: new Date(order.date_modified)
-            .toISOString()
-            .slice(0, order.date_modified.indexOf("T")),
-          mobile: order.billing.phone,
-          reference: order.number,
-          instructions: order.customer_note,
-          address: { street: address.trim(), city: order.shipping.city.trim() },
-        };
-        const res = await axios
-          .post("https://app.delivers.co.il/api/shipments", orderData, {
-            headers: {
-              "x-access-token":
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
+        const result = await axios.post(
+          "https://api2.pickpackage.com/api/external/tasks/createTask?appKey=4E8RZ0QY1TEVT78F9TQVWEH2DN4ZH4XMN06GQPES6Z4Q4Y9GB45Z",
+          {
+            hostId: numberOfOrder.id,
+            orderDate: order.date_created,
+            customerContact: {
+              name: order.billing.first_name + " " + order.billing.last_name,
+              phone: order.billing.phone,
+              email: order.billing.email,
             },
-          })
-          .catch(async (err) => {
-            await axios.post(
-              "https://app.delivers.co.il/api/shipments/import?create_with_error=true",
-              orderData,
-              {
-                headers: {
-                  "x-access-token":
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoxNzAsInVzZXJfaWQiOjI2MTgsInJvbGUiOiJhZG1pbiIsIm9yZ19pZCI6bnVsbCwibGltaXQiOm51bGwsImlhdCI6MTcxNTI2MDExNSwiZXhwIjoxODA5ODY4MTE1fQ.OfTJc8mSl19yvHWDoVlajXMbizGd7ABXMBY0qwz8LKo",
+            pickup: {
+              address: {
+                fullAddress: "הרימון 12 מושב קדרון",
+              },
+              contact: {
+                name: "משק קרישנר",
+                phone: "0586692614",
+              },
+              hardPriority: 0,
+              Priority: 1,
+            },
+            firstStop: {
+              scheduledAt:new Date().toISOString(),
+              contact: {
+                name: order.billing.first_name + " " + order.billing.last_name,
+                phone: order.billing.phone,
+                email: order.billing.email,
+              },
+              notes: order.customer_note,
+              address: {
+                city: order.shipping.city,
+                fullAddress: order.shipping.address1,
+              },
+              packages: [
+                {
+                  barcode: numberOfOrder.id,
+                  name: "ארגזים",
+                  quantity: numOfBoxes,
                 },
-              }
-            );
-          });
-      } else {
-        message = `שלום *${
-          order.shipping.first_name + " " + order.shipping.last_name
-        }*
-      הזמנה *${order.number}* ממשק קירשנר מוכנה לאיסוף. 
-      
-      נא הגיעו אל ״פירות קדרון" בוויז.
-      ברגע שאתם מגיעים אנא פנו לקופאים.
-      
-      שעות הפתיחה
-      ראשון-חמישי: 9:00-17:00
-      שישי: 8:00-15:00`;
+              ],
+            },
+            isDouble: false,
+            openDailyProject: true,
+          }
+        );
       }
-      // ?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29
       const res = await axios.put(
         "https://meshek-kirshner.co.il/wp-json/wc/v3/orders/" +
           order.number +
           "?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29",
         { status: value }
       );
-      // const response = await axios.get(`https://api-messageflow.flow-il.com/webhook/add_message?UUID=6a708fea-a4d0-4976-a180-9f3bdd3de52e&ToMobileNumber=${phone}&wapMessage=${encodeURIComponent(message)}`)
       nav("../items");
       setUpdateOrders((prev) => !prev);
       setOrders();
@@ -259,10 +249,22 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
             style={{ width: "150px" }}
             onChange={handleChange}
             options={status}
-            disabled={selectedRowKeys.length != order.line_items.length}
+            disabled={
+              (selectedRowKeys.length != order.line_items.length ||
+              numOfBoxes == 0)
+            }
           />
         </div>
       )}
+      {
+        <div className="statuswrap">
+          <span className="titleststus">כמות ארגזים</span>
+          <input
+            type="number"
+            onChange={(e) => setNumOfBoxes(e.target.value)}
+          />
+        </div>
+      }
       {order ? (
         <Table
           rowSelection={rowSelection}

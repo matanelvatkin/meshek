@@ -2,13 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { languageContext } from "../../App";
 import "./style.css";
-import Language from "../Language";
+import Language, { getWord } from "../Language";
 import { FaLanguage, FaBackward } from "react-icons/fa";
 
 
 export default function Header() {
   const { language } = useContext(languageContext);
   const location = useLocation();
+  const backWord = getWord('back')
   const [openMenu, setOpenMenu] = useState(false);
   const nav = useNavigate();
   const onClick = (e) => {
@@ -28,7 +29,7 @@ export default function Header() {
       {openMenu && <Language setOpenMenu={setOpenMenu} />}
       {location.pathname !== "/items" && (
         <button className="deButton3" onClick={onClick} value={"../items"}>
-          {language === "hebrew" ? "חזרה" : "आदेश"}
+          {backWord}
         </button>
       )}
     </div>

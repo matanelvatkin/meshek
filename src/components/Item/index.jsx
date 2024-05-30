@@ -6,6 +6,7 @@ import axios from "axios";
 import logo from "../../../public/logo.jpeg";
 import { languageContext } from "../../App";
 import "./style.css";
+import { getWord } from "../Language";
 
 export default function Item({ setOrders, orders, setUpdateOrders }) {
   const numberOfOrder = useParams();
@@ -17,17 +18,26 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   const [status, setStatus] = useState([]);
   const [userText, setUserText] = useState("");
   const [numOfBoxes, setNumOfBoxes] = useState(0);
+  const numOfBoxesWord = getWord('numOfBoxes')
+  const choseMelaket = getWord('choseMelaket')
+  const words = {
+    name:getWord('name'),
+    id:getWord('id'),
+    address:getWord('address'),
+    phone:getWord('phone'),
+    notes:getWord('notes'),
+  }
   const columns = [
     {
-      title: language === "hebrew" ? "תמונה" : "छवि",
+      title: getWord('image'),
       dataIndex: "image",
     },
     {
-      title: language === "hebrew" ? "שם" : "नाम",
+      title: getWord('name'),
       dataIndex: "name",
     },
     {
-      title: language === "hebrew" ? "כמות" : "मात्रा",
+      title: getWord('quantity'),
       dataIndex: "quantity",
     },
   ];
@@ -101,6 +111,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   };
   useEffect(() => {
     if (order) {
+      console.log(order);
       getText(order.customer_note);
       setData(
         order.line_items.map((item, index) => {
@@ -178,7 +189,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
     ],
   };
   const handleChange = async (value) => {
-    if (confirm("אתה בטוח שסיימת?")) {
+    if (confirm(getWord('arr_you_shure'))) {
       if (order.shipping_total != "0.00") {
         const result = await axios.post(
           "https://api2.pickpackage.com/api/external/tasks/createTask?appKey=4E8RZ0QY1TEVT78F9TQVWEH2DN4ZH4XMN06GQPES6Z4Q4Y9GB45Z",
@@ -211,7 +222,9 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
               notes: order.customer_note,
               address: {
                 city: order.shipping.city,
-                fullAddress: order.shipping.address1,
+                streetName: order.shipping.address1 ,
+                apartmentNumber:order.meta_data.find(data=>data.key =="_billing__dira"),
+                floor:order.meta_data.find(data=>data.key =="_billing__koma"),
               },
               packages: [
                 {
@@ -242,7 +255,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
       {status.length > 0 && (
         <div className="statuswrap">
           <span className="titleststus">
-            {language === "hebrew" ? "בסיום יש לבחור את שם המלקט" : "स्थिति"}:
+            {choseMelaket}:
           </span>
           <Select
             placeholder="processing"
@@ -258,7 +271,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
       )}
       {
         <div className="statuswrap">
-          <span className="titleststus">כמות ארגזים</span>
+          <span className="titleststus">{numOfBoxesWord}</span>
           <input
             type="number"
             onChange={(e) => setNumOfBoxes(e.target.value)}
@@ -277,14 +290,14 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
             <div>
               <div>
                 <p>
-                  שם:{order.billing.first_name + " " + order.billing.last_name}
+                  {words.name}:{order.billing.first_name + " " + order.billing.last_name}
                 </p>
-                <p>פלאפון: {order.billing.phone}</p>
-                <p>מספר: {numberOfOrder.id}</p>
-                <p>כתובת: {order.shipping.city}</p>
+                <p> {words.phone}: {order.billing.phone}</p>
+                <p> {words.id}: {numberOfOrder.id}</p>
+                <p> {words.address}: {order.shipping.city}</p>
               </div>
               <div>
-                הערות:<p className="text_red"> {userText}</p>
+              {words.notes}:<p className="text_red"> {userText}</p>
               </div>
             </div>
           )}

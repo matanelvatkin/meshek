@@ -4,6 +4,7 @@ import { json, useNavigate } from "react-router-dom";
 import Loader from "../Loader";
 import { languageContext } from "../../App";
 import "./style.css";
+import { getWord } from "../Language";
 
 export default function Items({ orders }) {
   const [data, setData] = useState([]);
@@ -13,7 +14,8 @@ export default function Items({ orders }) {
     selfCollecting: "",
     deliver: "",
   });
-  const { language } = useContext(languageContext);
+  const shipment = getWord('shipment')
+  const selfCollected = getWord('selfCollected')
   const rowClassName = (record, index) => {
     if (data[index].status == "likut") {
       if (localStorage.getItem(data[index].number)) {
@@ -28,19 +30,19 @@ export default function Items({ orders }) {
   const nav = useNavigate();
   const columns = [
     {
-      title: language === "hebrew" ? "כתובת" : "तारीख",
+      title: getWord('address'),
       dataIndex: "city",
     },
     {
-      title: language === "hebrew" ? "הזמנה" : "क्रम संख्या",
+      title: getWord('id'),
       dataIndex: "number",
     },
     {
-      title: language === "hebrew" ? "סה''כ" : "स्थिति",
+      title: getWord("total"),
       dataIndex: "total",
     },
     {
-      title: language === "hebrew" ? "כמות" : "स्थिति",
+      title: getWord('quantity'),
       dataIndex: "collected",
     },
   ];
@@ -96,7 +98,7 @@ export default function Items({ orders }) {
               }}
               value="selfCollecting"
             >
-              ללא משלוח (
+              {selfCollected} (
               {shippings.selfCollecting ? shippings.selfCollecting.length : ""})
             </button>
             <button
@@ -107,7 +109,7 @@ export default function Items({ orders }) {
               }}
               value="deliver"
             >
-              משלוחים ({shippings.deliver ? shippings.deliver.length : ""})
+              {shipment} ({shippings.deliver ? shippings.deliver.length : ""})
             </button>
           </div>
           {data.length>0&&<Table

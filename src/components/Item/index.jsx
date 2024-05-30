@@ -223,8 +223,8 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
               address: {
                 city: order.shipping.city,
                 streetName: order.shipping.address1 ,
-                apartmentNumber:order.meta_data.find(data=>data.key =="_billing__dira"),
-                floor:order.meta_data.find(data=>data.key =="_billing__koma"),
+                apartmentNumber:order.meta_data.find(data=>data.key =="_billing__dira")?.value,
+                floor:order.meta_data.find(data=>data.key =="_billing__koma")?.value,
               },
               packages: [
                 {

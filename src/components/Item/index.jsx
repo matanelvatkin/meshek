@@ -111,7 +111,6 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   };
   useEffect(() => {
     if (order) {
-      console.log(order);
       getText(order.customer_note);
       setData(
         order.line_items.map((item, index) => {
@@ -189,54 +188,55 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
     ],
   };
   const handleChange = async (value) => {
-    if (confirm(getWord('arr_you_shure'))) {
+    if (confirm('אתה בטוח שסיימת?')) {
       if (order.shipping_total != "0.00") {
-        const result = await axios.post(
-          "https://api2.pickpackage.com/api/external/tasks/createTask?appKey=4E8RZ0QY1TEVT78F9TQVWEH2DN4ZH4XMN06GQPES6Z4Q4Y9GB45Z",
-          {
-            hostId: numberOfOrder.id,
-            orderDate: order.date_created,
-            customerContact: {
+        const data =  {
+          hostId: numberOfOrder.id,
+          orderDate: order.date_created,
+          customerContact: {
+            name: order.billing.first_name + " " + order.billing.last_name,
+            phone: order.billing.phone,
+            email: order.billing.email,
+          },
+          pickup: {
+            address: {
+              fullAddress: "הרימון 12 מושב קדרון",
+            },
+            contact: {
+              name: "משק קרישנר",
+              phone: "0586692614",
+            },
+            hardPriority: 0,
+            Priority: 1,
+          },
+          firstStop: {
+            scheduledAt:new Date().toISOString(),
+            contact: {
               name: order.billing.first_name + " " + order.billing.last_name,
               phone: order.billing.phone,
               email: order.billing.email,
             },
-            pickup: {
-              address: {
-                fullAddress: "הרימון 12 מושב קדרון",
-              },
-              contact: {
-                name: "משק קרישנר",
-                phone: "0586692614",
-              },
-              hardPriority: 0,
-              Priority: 1,
+            notes: order.customer_note,
+            address: {
+              city: order.shipping.city,
+              streetName: order.shipping.address_1 ,
+              apartmentNumber:order.meta_data.find(data=>data.key =="_billing__dira")?.value,
+              floor:order.meta_data.find(data=>data.key =="_billing__koma")?.value,
             },
-            firstStop: {
-              scheduledAt:new Date().toISOString(),
-              contact: {
-                name: order.billing.first_name + " " + order.billing.last_name,
-                phone: order.billing.phone,
-                email: order.billing.email,
+            packages: [
+              {
+                barcode: numberOfOrder.id+Date.now(),
+                name: "ארגזים",
+                quantity: numOfBoxes,
               },
-              notes: order.customer_note,
-              address: {
-                city: order.shipping.city,
-                streetName: order.shipping.address1 ,
-                apartmentNumber:order.meta_data.find(data=>data.key =="_billing__dira")?.value,
-                floor:order.meta_data.find(data=>data.key =="_billing__koma")?.value,
-              },
-              packages: [
-                {
-                  barcode: numberOfOrder.id,
-                  name: "ארגזים",
-                  quantity: numOfBoxes,
-                },
-              ],
-            },
-            isDouble: false,
-            openDailyProject: true,
-          }
+            ],
+          },
+          isDouble: false,
+          openDailyProject: true,
+        }
+        const result = await axios.post(
+          "https://api2.pickpackage.com/api/external/tasks/createTask?appKey=4E8RZ0QY1TEVT78F9TQVWEH2DN4ZH4XMN06GQPES6Z4Q4Y9GB45Z",
+         data
         );
       }
       const res = await axios.put(

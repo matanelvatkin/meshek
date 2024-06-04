@@ -4,11 +4,14 @@ import { json, useNavigate } from "react-router-dom";
 import Loader from "../Loader";
 import { languageContext } from "../../App";
 import "./style.css";
-import { getWord } from "../Language";
+import  { getWord } from "../Language";
+import axios from "axios";
 
 export default function Items({ orders }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cityNames, setCityNames] = useState(true);
+  const { language } = useContext(languageContext);
   const [shippingStatus, setShippingStatus] = useState();
   const [shippings, setShippings] = useState({
     selfCollecting: "",
@@ -28,6 +31,22 @@ export default function Items({ orders }) {
     }
   };
   const nav = useNavigate();
+  const translateText = async (text) => {
+    try {
+      let response = await axios.get(
+        "https://api.mymemory.translated.net/get",
+        {
+          params: {
+            q: text,
+            langpair: "he|en",
+          },
+        }
+      );
+      return(response.data.responseData.translatedText);
+    } catch (error) {
+      console.error("Error translating text:", error);
+    }
+  };
   const columns = [
     {
       title: getWord('address'),
@@ -48,6 +67,10 @@ export default function Items({ orders }) {
   ];
   useEffect(() => {
     if (orders && orders.length > 0) {
+      orders.forEach(async order => {
+        const city = language==='hebrew' ? order.shipping.city : await translateText(order.shipping.city)
+        setCityNames(prev=>({...prev,[order.id]:city}))
+      })
       setShippings((prev) => ({
         selfCollecting: orders.filter(
           (order) => order.shipping_total == "0.00"
@@ -64,7 +87,7 @@ export default function Items({ orders }) {
     } else if (orders) {
       setLoading(false);
     }
-  }, [orders]);
+  }, [orders,language]);
   useEffect(() => {
     if (shippingStatus) {
       setData(
@@ -72,7 +95,7 @@ export default function Items({ orders }) {
           .map((item) => {
             return {
               key: item.id,
-              city: item.shipping.city,
+              city: cityNames[item.id],
               number: item.number,
               total: item.total,
               collected: (sessionStorage.getItem(item.number)?JSON.parse(sessionStorage.getItem(item.number)).length:'0')+"/"+item.line_items.length,
@@ -82,7 +105,7 @@ export default function Items({ orders }) {
           .sort((a, b) => a.number - b.number)
       );
     }
-  }, [shippingStatus]);
+  }, [shippingStatus,cityNames]);
   return (
     <div>
       {loading ? (

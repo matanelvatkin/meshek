@@ -14,6 +14,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   const nav = useNavigate();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [data, setData] = useState([]);
+  const [cityName, setCityName] = useState();
   const [order, setOrder] = useState();
   const [status, setStatus] = useState([]);
   const [userText, setUserText] = useState("");
@@ -52,7 +53,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
           },
         }
       );
-      setUserText(response.data.responseData.translatedText);
+      return(response.data.responseData.translatedText);
     } catch (error) {
       console.error("Error translating text:", error);
     }
@@ -60,11 +61,23 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   const getText = async (text) => {
     if (text) {
       if (language === "hebrew") setUserText(text);
-      else translateText(text);
+      else {
+        const note = await translateText(text);
+        setUserText(note)}
     }
   };
+  const getCityName= async (text) => {
+    if (text) {
+      if (language === "hebrew") setCityName(text);
+      else {
+        const city = await translateText(text);
+        setCityName(city)}
+    }
+  }
   useEffect(() => {
-    if (order) getText(order.customer_note);
+    if (order) {
+      getText(order.customer_note)
+      getCityName(order.shipping.city)}
   }, [language]);
   useEffect(() => {
     if (orders) {
@@ -112,6 +125,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
   useEffect(() => {
     if (order) {
       getText(order.customer_note);
+      getCityName(order.shipping.city)
       setData(
         order.line_items.map((item, index) => {
           return {
@@ -294,7 +308,7 @@ export default function Item({ setOrders, orders, setUpdateOrders }) {
                 </p>
                 <p> {words.phone}: {order.billing.phone}</p>
                 <p> {words.id}: {numberOfOrder.id}</p>
-                <p> {words.address}: {order.shipping.city}</p>
+                <p> {words.address}: {cityName}</p>
               </div>
               <div>
               {words.notes}:<p className="text_red"> {userText}</p>

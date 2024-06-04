@@ -4,36 +4,36 @@ import "./style.css";
 
 const LA = {
   india: {
-    image: "image",
-    name: "name",
-    quantity: "quantity",
-    arr_you_shure: "arr you shure?",
-    id: "order number",
-    address: "address",
+    image: "Image",
+    name: "Name",
+    quantity: "Qty",
+    arr_you_shure: "Are you shure?",
+    id: "Order number",
+    address: "Address",
     notes: "notes",
-    numOfBoxes: "num of boxes",
-    back: "back",
-    total: "total",
-    selfCollected: "self-collected",
-    shipment: "shipment",
-    choseMelaket:"in the end chose melaket",
-    phone:'phone'
+    numOfBoxes: "Number of boxes",
+    back: "Back",
+    total: "Total",
+    selfCollected: "Pickup",
+    shipment: "Shipping",
+    choseMelaket:"Chose Your Name",
+    phone:'Phone'
   },
   en: {
-    image: "image",
-    name: "name",
-    quantity: "quantity",
-    arr_you_shure: "arr you shure?",
-    id: "order number",
-    address: "address",
+    image: "Image",
+    name: "Name",
+    quantity: "Qty",
+    arr_you_shure: "Are you shure?",
+    id: "Order number",
+    address: "Address",
     notes: "notes",
-    numOfBoxes: "num of boxes",
-    back: "back",
-    total: "total",
-    selfCollected: "self-collected",
-    shipment: "shipment",
-    choseMelaket:"in the end chose melaket",
-    phone:'phone'
+    numOfBoxes: "Number of boxes",
+    back: "Back",
+    total: "Total",
+    selfCollected: "Pickup",
+    shipment: "Shipping",
+    choseMelaket:"Chose Your Name",
+    phone:'Phone'
   },
   hebrew: {
     image: "תמונה",
@@ -73,9 +73,9 @@ export default function Language({ setOpenMenu }) {
       <button className="deButton" onClick={onClick} value="india">
         हिंदी
       </button>
-      <button className="deButton" onClick={onClick} value="en">
+      {/* <button className="deButton" onClick={onClick} value="en">
         english
-      </button>
+      </button> */}
     </div>
   );
 }

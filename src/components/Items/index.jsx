@@ -4,21 +4,25 @@ import { json, useNavigate } from "react-router-dom";
 import Loader from "../Loader";
 import { languageContext } from "../../App";
 import "./style.css";
-import  { getWord } from "../Language";
+import { getWord } from "../Language";
 import axios from "axios";
 
-export default function Items({ orders }) {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [cityNames, setCityNames] = useState(true);
+export default function Items({ orders, loading, setLoading }) {
   const { language } = useContext(languageContext);
+
+  const nav = useNavigate();
+
+  const [data, setData] = useState([]);
+  const [cityNames, setCityNames] = useState(true);
   const [shippingStatus, setShippingStatus] = useState();
   const [shippings, setShippings] = useState({
     selfCollecting: "",
     deliver: "",
   });
-  const shipment = getWord('shipment')
-  const selfCollected = getWord('selfCollected')
+
+  const shipment = getWord('shipment');
+  const selfCollected = getWord('selfCollected');
+
   const rowClassName = (record, index) => {
     if (data[index].status == "likut") {
       if (localStorage.getItem(data[index].number)) {
@@ -30,7 +34,7 @@ export default function Items({ orders }) {
       return "";
     }
   };
-  const nav = useNavigate();
+
   const translateText = async (text) => {
     try {
       let response = await axios.get(
@@ -42,11 +46,12 @@ export default function Items({ orders }) {
           },
         }
       );
-      return(response.data.responseData.translatedText);
+      return (response.data.responseData.translatedText);
     } catch (error) {
       console.error("Error translating text:", error);
     }
   };
+
   const columns = [
     {
       title: getWord('address'),
@@ -65,29 +70,35 @@ export default function Items({ orders }) {
       dataIndex: "collected",
     },
   ];
+
   useEffect(() => {
     if (orders && orders.length > 0) {
       orders.forEach(async order => {
-        const city = language==='hebrew' ? order.shipping.city : await translateText(order.shipping.city)
-        setCityNames(prev=>({...prev,[order.id]:city}))
+        const city = language === 'hebrew' ? order.shipping.city : await translateText(order.shipping.city)
+        setCityNames(prev => ({ ...prev, [order.id]: city }))
       })
+
       setShippings((prev) => ({
         selfCollecting: orders.filter(
           (order) => order.shipping_total == "0.00"
         ),
         deliver: orders.filter((order) => order.shipping_total != "0.00"),
       }));
-      if(sessionStorage.getItem("shippingStatus")){
+
+      if (sessionStorage.getItem("shippingStatus")) {
         setShippingStatus(sessionStorage.getItem("shippingStatus"))
       }
-      else{
+      else {
         setShippingStatus('deliver')
       }
+
       setLoading(false);
+      
     } else if (orders) {
       setLoading(false);
     }
-  }, [orders,language]);
+  }, [orders, language]);
+
   useEffect(() => {
     if (shippingStatus) {
       setData(
@@ -98,23 +109,25 @@ export default function Items({ orders }) {
               city: cityNames[item.id],
               number: item.number,
               total: item.total,
-              collected: (sessionStorage.getItem(item.number)?JSON.parse(sessionStorage.getItem(item.number)).length:'0')+"/"+item.line_items.length,
+              collected: (sessionStorage.getItem(item.number) ? JSON.parse(sessionStorage.getItem(item.number)).length : '0') + "/" + item.line_items.length,
               status: item.status
             };
           })
           .sort((a, b) => a.number - b.number)
       );
     }
-  }, [shippingStatus,cityNames]);
+  }, [shippingStatus, cityNames]);
+
+
   return (
-    <div>
+    <div className="itemsContainer">
       {loading ? (
         <Loader />
       ) : (
         <>
           <div className="collectingOptions">
             <button
-              className={`coButton ${shippingStatus=='selfCollecting'? 'selected' : ''}`}
+              className={`coButton ${shippingStatus == 'selfCollecting' ? 'selected' : ''}`}
               onClick={(e) => {
                 sessionStorage.setItem('shippingStatus', e.target.value);
                 setShippingStatus(e.target.value);
@@ -125,7 +138,7 @@ export default function Items({ orders }) {
               {shippings.selfCollecting ? shippings.selfCollecting.length : ""})
             </button>
             <button
-              className={`coButton ${shippingStatus=='deliver'? 'selected' : ''}`}
+              className={`coButton ${shippingStatus == 'deliver' ? 'selected' : ''}`}
               onClick={(e) => {
                 sessionStorage.setItem('shippingStatus', e.target.value);
                 setShippingStatus(e.target.value);
@@ -135,12 +148,12 @@ export default function Items({ orders }) {
               {shipment} ({shippings.deliver ? shippings.deliver.length : ""})
             </button>
           </div>
-          {data.length>0&&<Table
+          {data.length > 0 && <Table
             onRow={(record, rowIndex) => {
               return {
                 onClick: (event) => {
                   if (
-                    data[rowIndex].status!='likut'||
+                    data[rowIndex].status != 'likut' ||
                     localStorage.getItem(data[rowIndex].number)
                   ) {
                     localStorage.setItem(data[rowIndex].number, true);

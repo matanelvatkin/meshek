@@ -16,6 +16,11 @@
     position: relative;
 }
 
+.btns{
+    display: flex;
+    gap: 20px;
+}
+
 .deButton2 {
     border: none;
     background: green;
@@ -39,5 +44,4 @@
     text-decoration: underline;
     background: #fff;
     border: none;
-
 }

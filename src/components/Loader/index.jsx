@@ -7,7 +7,6 @@ import { getWord } from "../Language";
 export default function Loader() {
 
   const { text } = useLoadingStore();
-  console.log('text: ', text);
 
   const translatedText = getWord(text);
   const loading = translatedText.props.children || 'Loading';

@@ -22,6 +22,7 @@ export default function Item({ setOrders, orders, setUpdateOrders, setId, loadin
   const [status, setStatus] = useState([]);
   const [userText, setUserText] = useState("");
   const [numOfBoxes, setNumOfBoxes] = useState(0);
+  const [isLikut, setIsLikut] = useState();
 
   const numOfBoxesWord = getWord('numOfBoxes');
   const choseMelaket = getWord('choseMelaket');
@@ -101,12 +102,31 @@ export default function Item({ setOrders, orders, setUpdateOrders, setId, loadin
           "https://meshek-kirshner.co.il/wp-json/wc/v3/orders/" +
           ordered.id +
           "?consumer_key=ck_c46ca7077572152d70f72053920ec5d19e552ad1&consumer_secret=cs_3abdc6f2aeaf8f098a7497875e25430e6abdef29"
-        ))();
-      if (res.status == "likut" && !localStorage.getItem(ordered.id))
-        nav("../items");
+        ))().then(response => {setIsLikut(response.data.status); console.log(response)})
       setOrder(ordered);
     }
   }, [orders]);
+
+  const orderAlreadyTaken = getWord("alreadyTaken");
+
+  useEffect(() => {
+    if (isLikut) {
+      console.log('localStorage[numberOfOrder.id]: ', localStorage[numberOfOrder.id])
+      // אם ההזמנה לא שלו וגם הסטטוס שלה בליקוט הוא נזרק, אם ההזמנה שלו או שהסטטוס לא בליקוט ממשיך הלאה
+      if ((isLikut == "likut") && localStorage[numberOfOrder.id] !== "true") {
+        localStorage.removeItem(numberOfOrder.id);
+        // הודעה שההזמנה כבר נתפסה
+        alert(orderAlreadyTaken.props.children);
+        nav("../items");
+        // reload the page:
+        window.location.reload();
+      } else {
+        localStorage.setItem(numberOfOrder.id, true);
+      }
+    }
+    console.log('isLikut: ', isLikut)
+  }, [isLikut])
+
 
   useEffect(() => {
     const go = async () => {

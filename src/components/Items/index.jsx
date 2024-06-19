@@ -156,7 +156,6 @@ export default function Items({ orders, loading, setLoading }) {
                     data[rowIndex].status != 'likut' ||
                     localStorage.getItem(data[rowIndex].number)
                   ) {
-                    localStorage.setItem(data[rowIndex].number, true);
                     nav("../items/" + data[rowIndex].number);
                   }
                 },

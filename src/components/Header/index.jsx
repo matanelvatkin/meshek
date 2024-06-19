@@ -54,6 +54,8 @@ export default function Header({ id, go, setLoading, loading }) {
       setLoading(false);
       await leaveOrder();
       nav(e.target.value);
+      // reload the page:
+      window.location.reload();
     }
   };
 

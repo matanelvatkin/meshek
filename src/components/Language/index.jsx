@@ -17,7 +17,14 @@ const LA = {
     selfCollected: "Pickup",
     shipment: "Shipping",
     choseMelaket:"Chose Your Name",
-    phone:'Phone'
+    phone:'Phone',
+    leaveOrder: "Leave the order",
+    leaveConfirm: "This action will unassign this order to you, are you sure you want to exit?",
+    loadingOrders: "Loading orders",
+    saveOrderToYou: "Saves the order for you",
+    leavingOrder: "Leaving the order to others",
+    alreadyTaken: "This order has already been taken by someone else, you are redirected to the home page",
+    refreshigOrders: "Refreshing orders"
   },
   en: {
     image: "Image",
@@ -33,7 +40,14 @@ const LA = {
     selfCollected: "Pickup",
     shipment: "Shipping",
     choseMelaket:"Chose Your Name",
-    phone:'Phone'
+    phone:'Phone',
+    leaveOrder: "Leave the order",
+    leaveConfirm: "This action will unassign this order to you, are you sure you want to exit?",
+    loadingOrders: "Loading orders",
+    saveOrderToYou: "Saves the order for you",
+    leavingOrder: "Leaving the order to others",
+    alreadyTaken: "This order has already been taken by someone else, you are redirected to the home page",
+    refreshigOrders: "Refreshing orders"
   },
   hebrew: {
     image: "תמונה",
@@ -49,7 +63,14 @@ const LA = {
     selfCollected: "ללא משלוח",
     shipment: "משלוחים",
     choseMelaket:'בסיום יש לבחור את שם המלקט',
-    phone:'פלאפון'
+    phone:'פלאפון',
+    leaveOrder: "נטישת הזמנה",
+    leaveConfirm: "פעולה זאת תבטל את הקצאת הזמנה זאת אליך, האם אתה בטוח שברצונך לצאת?",
+    loadingOrders: "טוען הזמנות",
+    saveOrderToYou: "שומר לך את ההזמנה",
+    leavingOrder: "נוטש הזמנה",
+    alreadyTaken: "הזמנה זאת כבר נתפסה בידי מישהו אחר, הנך מועבר לדף הבית",
+    refreshigOrders: "מרענן הזמנות"
   },
 };
 

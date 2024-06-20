@@ -40,12 +40,12 @@ export default function Header({ id, go, setLoading, loading }) {
     }
   };
 
-  const exit = async (e) => {
-    setText("saveOrderToYou");
-    setLoading(true);
-    await go();
-    nav(e.target.value);
-  };
+  // const exit = async (e) => {
+  //   setText("saveOrderToYou");
+  //   setLoading(true);
+  //   await go();
+  //   nav(e.target.value);
+  // };
 
   const leaveOrderBtn = async (e) => {
     let areYouSure = confirm(areYouSureWord.props.children);
@@ -78,9 +78,9 @@ export default function Header({ id, go, setLoading, loading }) {
           <button className="deButton3" onClick={leaveOrderBtn} value={"../items"}>
             {leaveWord}
           </button>
-          <button className="deButton3" onClick={exit} value={"../items"}>
+          {/* <button className="deButton3" onClick={exit} value={"../items"}>
             {backWord}
-          </button>
+          </button> */}
         </div>
       )}
     </div>
